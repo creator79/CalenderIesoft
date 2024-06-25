@@ -173,11 +173,11 @@ const CalendarComponent: FC = () => {
     };
   };
 
-const handleSelectEvent = (event: CustomEvent, e: React.SyntheticEvent<HTMLElement>) => {
-  const resource = resources.find(r => r.id === event.resourceId);
-  alert(`Selected event: ${event.title}\nPerson: ${resource?.title}\nCustom border color: ${event.borderColor}`);
-};
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSelectEvent = (event: CustomEvent, _e: React.SyntheticEvent<HTMLElement>) => {
+    const resource = resources.find(r => r.id === event.resourceId);
+    alert(`Selected event: ${event.title}\nPerson: ${resource?.title}\nCustom border color: ${event.borderColor}`);
+  };
 
   const filteredEvents = events.filter(event =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -206,7 +206,7 @@ const handleSelectEvent = (event: CustomEvent, e: React.SyntheticEvent<HTMLEleme
         resourceTitleAccessor={(resource: Resource) => resource.title}
         step={15}
         timeslots={4}
-        $eventsCount={filteredEvents.length} // Pass the count of events to the styled component
+        $eventsCount={filteredEvents.length} 
       />
     </CalendarContainer>
   );
