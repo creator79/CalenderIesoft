@@ -1,9 +1,6 @@
-// @ts-ignore
-import { FC, useRef, useState } from "react";
-import { Calendar, dateFnsLocalizer, Event } from "react-big-calendar";
-import withDragAndDrop, {
-  withDragAndDropProps,
-} from "react-big-calendar/lib/addons/dragAndDrop";
+import { FC, useRef, useState, KeyboardEvent } from "react";
+import { Calendar, dateFnsLocalizer, Event as REvent } from "react-big-calendar";
+import withDragAndDrop, { withDragAndDropProps } from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
@@ -14,15 +11,10 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import styled from "styled-components";
 
-interface CustomEvent extends Event {
-  resourceId: number;
-  borderColor?: string;
-}
-
-interface Resource {
-  id: number;
-  title: string;
+interface CustomEvent extends REvent {
+  person: string;
   color: string;
+  borderColor?: string;
 }
 
 interface Tag {
@@ -46,7 +38,7 @@ const SearchInput = styled.input`
 
 const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   .rbc-event {
-    border: none; /* Remove border from events */
+    border: none;
     opacity: 0.8;
     color: black;
   }
@@ -79,18 +71,19 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-time-content {
-    min-height: ${(props) =>
-      props.$eventsCount * 100}px; /* Adjust based on the number of events */
+    min-height: ${(props) => props.$eventsCount * 100}px;
   }
 
   .rbc-addons-dnd .rbc-addons-dnd-resizable-month-event {
-    display: none; /* Hide the drag-and-drop indicators */
+    display: none;
   }
 `;
 
 const endOfHour = (date: Date): Date => addHours(startOfHour(date), 1);
 const now = new Date();
 const start = endOfHour(now);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-ignore
 const end = addHours(start, 1);
 
 const locales = {
@@ -137,6 +130,7 @@ const CloseButton = styled.button`
   align-self: flex-end;
   margin-bottom: 10px;
 `;
+
 const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -160,54 +154,94 @@ const TagCloseButton = styled.button`
   margin-left: 5px;
   font-size: 16px;
 `;
+
 const CalendarComponent: FC = () => {
   const [searchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<CustomEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tags, setTags] = useState<Tag[]>([]); // State for managing tags
-  const tagInputRef = useRef<HTMLInputElement>(null); // Ref for tag input
+  const [tags, setTags] = useState<Tag[]>([]);
+  const tagInputRef = useRef<HTMLInputElement>(null);
 
-  const resources: Resource[] = [
-    { id: 1, title: "John Doe", color: "#ff9999" },
-    { id: 2, title: "Sarah Smith", color: "#99ff99" },
-    { id: 3, title: "Mike Johnson", color: "#9999ff" },
-  ];
+  const darkerShade = (color: string) => {
+    let r = parseInt(color.slice(1, 3), 16);
+    let g = parseInt(color.slice(3, 5), 16);
+    let b = parseInt(color.slice(5, 7), 16);
+    r = Math.max(0, r - 50);
+    g = Math.max(0, g - 50);
+    b = Math.max(0, b - 50);
+    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+  };
 
   const [events, setEvents] = useState<CustomEvent[]>([
     {
-      title: "Learn cool stuff with John",
-      start,
-      end,
-      resourceId: 1,
-      borderColor: "#ff0000",
+      title: "Meeting with Alice",
+      start: new Date(2024, 5, 24, 10, 0),
+      end: new Date(2024, 5, 24, 11, 0),
+      person: "Alice",
+      color: "#f56a00",
     },
     {
-      title: "Meeting with Sarah",
-      start: addHours(start, 1),
-      end: addHours(end, 1),
-      resourceId: 2,
-      borderColor: "#00ff00",
+      title: "Meeting with Bob",
+      start: new Date(2024, 5, 24, 10, 0),
+      end: new Date(2024, 5, 24, 11, 0),
+      person: "Bob",
+      color: "#7265e6",
     },
     {
-      title: "Call with Mike",
-      start: addHours(start, 2),
-      end: addHours(end, 2),
-      resourceId: 3,
-      borderColor: "#0000ff",
+      title: "Meeting with Charlie",
+      start: new Date(2024, 5, 24, 10, 0),
+      end: new Date(2024, 5, 24, 11, 0),
+      person: "Charlie",
+      color: "#ffbf00",
     },
     {
-      title: "Project Discussion",
-      start: addHours(start, 3),
-      end: addHours(end, 3),
-      resourceId: 1,
-      borderColor: "#ff9900",
+      title: "Meeting with Dave",
+      start: new Date(2024, 5, 24, 10, 0),
+      end: new Date(2024, 5, 24, 11, 0),
+      person: "Dave",
+      color: "#00aaff",
     },
     {
-      title: "Team Meeting",
-      start: addHours(start, 4),
-      end: addHours(end, 4),
-      resourceId: 2,
-      borderColor: "#0099ff",
+      title: "Project Review",
+      start: new Date(2024, 5, 25, 14, 0),
+      end: new Date(2024, 5, 25, 15, 0),
+      person: "Alice",
+      color: "#f56a00",
+    },
+    {
+      title: "Client Call",
+      start: new Date(2024, 5, 25, 16, 0),
+      end: new Date(2024, 5, 25, 17, 0),
+      person: "Bob",
+      color: "#7265e6",
+    },
+    {
+      title: "Team Sync",
+      start: new Date(2024, 5, 26, 10, 0),
+      end: new Date(2024, 5, 26, 11, 0),
+      person: "Charlie",
+      color: "#ffbf00",
+    },
+    {
+      title: "Lunch with Mike",
+      start: new Date(2024, 5, 26, 12, 0),
+      end: new Date(2024, 5, 26, 13, 0),
+      person: "Dave",
+      color: "#00aaff",
+    },
+    {
+      title: "One-on-One",
+      start: new Date(2024, 5, 27, 9, 0),
+      end: new Date(2024, 5, 27, 10, 0),
+      person: "Alice",
+      color: "#f56a00",
+    },
+    {
+      title: "Weekly Standup",
+      start: new Date(2024, 5, 27, 11, 0),
+      end: new Date(2024, 5, 27, 12, 0),
+      person: "Bob",
+      color: "#7265e6",
     },
   ]);
 
@@ -215,38 +249,27 @@ const CalendarComponent: FC = () => {
     const { event, start, end } = data;
     setEvents((currentEvents) => {
       const updatedEvents = currentEvents.map((e) =>
-        e.title === event.title
-          ? { ...e, start: new Date(start), end: new Date(end) }
-          : e
+        e.title === event.title ? { ...e, start: new Date(start), end: new Date(end) } : e
       );
       return updatedEvents;
     });
   };
 
   const onEventDrop: withDragAndDropProps["onEventDrop"] = (data) => {
-    const { event, start, end, resourceId } = data;
-    //@ts-ignore
+    const { event, start, end } = data;
     setEvents((currentEvents) => {
       const updatedEvents = currentEvents.map((e) =>
-        e.title === event.title
-          ? {
-              ...e,
-              start: new Date(start),
-              end: new Date(end),
-              resourceId: resourceId || e.resourceId,
-            }
-          : e
+        e.title === event.title ? { ...e, start: new Date(start), end: new Date(end) } : e
       );
       return updatedEvents;
     });
   };
 
   const eventStyleGetter = (event: CustomEvent) => {
-    const resource = resources.find((r) => r.id === event.resourceId);
     return {
       style: {
-        backgroundColor: resource ? resource.color : "#999999",
-        borderLeft: `5px solid ${event.borderColor || "#000000"}`,
+        backgroundColor: event.color,
+        borderLeft: `5px solid ${darkerShade(event.color)}`,
       },
     };
   };
@@ -259,17 +282,14 @@ const CalendarComponent: FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  //@ts-ignore
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInputRef.current?.value.trim() !== "") {
-      //@ts-ignore
+      // @ts-ignore
       const newTagLabel = tagInputRef.current.value.trim();
-      setTags([
-        ...tags,
-        { id: new Date().getTime().toString(), label: newTagLabel },
-      ]);
-      //@ts-ignore
-      tagInputRef.current.value = ""; // Clear input
+      setTags([...tags, { id: new Date().getTime().toString(), label: newTagLabel }]);
+      // @ts-ignore
+      tagInputRef.current.value = "";
     }
   };
 
@@ -280,12 +300,11 @@ const CalendarComponent: FC = () => {
 
   const filteredEvents = events.filter(
     (event) =>
-      //@ts-ignore
+      // @ts-ignore
       event?.title?.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      //@ts-ignore
       (tags.length === 0 ||
         tags.some((tag) =>
-          //@ts-ignore
+          // @ts-ignore
           event?.title?.toLowerCase().includes(tag.label.toLowerCase())
         ))
   );
@@ -318,11 +337,6 @@ const CalendarComponent: FC = () => {
         eventPropGetter={eventStyleGetter}
         // @ts-ignore
         onSelectEvent={handleSelectEvent}
-        resources={resources}
-        // @ts-ignore
-        resourceIdAccessor={(resource: Resource) => resource.id}
-        // @ts-ignore
-        resourceTitleAccessor={(resource: Resource) => resource.title}
         step={15}
         timeslots={4}
         $eventsCount={filteredEvents.length}
@@ -334,13 +348,7 @@ const CalendarComponent: FC = () => {
             <ModalContent>
               <CloseButton onClick={closeModal}>Close</CloseButton>
               <p>Title: {selectedEvent.title}</p>
-              <p>
-                Person:{" "}
-                {
-                  resources.find((r) => r.id === selectedEvent.resourceId)
-                    ?.title
-                }
-              </p>
+              <p>Person: {selectedEvent.person}</p>
               <p>Custom border color: {selectedEvent.borderColor}</p>
             </ModalContent>
           </ModalContainer>
