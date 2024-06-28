@@ -2,10 +2,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-
 import React, { FC, useRef, useState, KeyboardEvent } from "react";
-import { Calendar, dateFnsLocalizer, Event as REvent } from "react-big-calendar";
-import withDragAndDrop, { withDragAndDropProps } from "react-big-calendar/lib/addons/dragAndDrop";
+import {
+  Calendar,
+  dateFnsLocalizer,
+  Event as REvent,
+} from "react-big-calendar";
+import withDragAndDrop, {
+  withDragAndDropProps,
+} from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
@@ -29,24 +34,23 @@ interface Tag {
   label: string;
 }
 
-
-
 const CalendarContainer = styled.div<{ $isOpen: boolean }>`
   width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
-  
-  transform: ${({ $isOpen }) => ($isOpen ? "translateX(0)" : "translateX(-100%)")};
+
+  transform: ${({ $isOpen }) =>
+    $isOpen ? "translateX(0)" : "translateX(-100%)"};
 
   @media (min-width: 1024px) {
-   
-    transform: translateX(0); /* Ensure calendar is always visible on larger screens */
+    transform: translateX(
+      0
+    ); /* Ensure calendar is always visible on larger screens */
   }
-    @media (max-width: px) {
-   
-   visibility: hidden;
+  @media (max-width: px) {
+    visibility: hidden;
   }
 `;
 
@@ -87,7 +91,6 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-header {
-    
     padding: auto;
     font-weight: bold;
   }
@@ -97,22 +100,24 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-date-cell {
-    font-size: 16px;
+    font-size: 10px;
     font-weight: bold;
   }
-     .rbc-timeslot-group {
-      min-height: 60px; /* Adjust this value to increase/decrease row height */
-      color: #717171;
-    }
+  .rbc-timeslot-group {
+    min-height: 16px; /* Adjust this value to increase/decrease row height */
+    color: #717171;
+  }
 
-    .rbc-time-slot {
-      min-height: 30px; /* Should match the value above */
-      
-    }
+  .rbc-time-slot {
+    min-height: 16px; /* Should match the value above */
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: 500px;
+  }
 
-    .rbc-events-container {
-      margin-right: 10px; /* Add some margin to prevent events from touching the time column */
-    }
+  .rbc-events-container {
+    margin-right: 10px; /* Add some margin to prevent events from touching the time column */
+  }
 
   .rbc-off-range-bg {
     background-color: #f8f8f8;
@@ -123,7 +128,9 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-time-content {
-    height: 800px; /* Adjust the height to 800px or your desired height */
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500px;
   }
 
   .rbc-addons-dnd .rbc-addons-dnd-resizable-month-event {
@@ -216,7 +223,6 @@ const DrawerCalender: FC = () => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(true); // State for toggling calendar visibility
   const [isCalendarOpen, setIsCalendarOpen] = useState(false); // State for toggling calendar drawer
 
-
   const darkerShade = (color: string) => {
     let r = parseInt(color.slice(1, 3), 16);
     let g = parseInt(color.slice(3, 5), 16);
@@ -224,7 +230,9 @@ const DrawerCalender: FC = () => {
     r = Math.max(0, r - 50);
     g = Math.max(0, g - 50);
     b = Math.max(0, b - 50);
-    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+    return `#${r.toString(16).padStart(2, "0")}${g
+      .toString(16)
+      .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
   };
 
   const [events, setEvents] = useState<CustomEvent[]>([
@@ -304,7 +312,9 @@ const DrawerCalender: FC = () => {
     const { event, start, end } = data;
     setEvents((currentEvents) => {
       const updatedEvents = currentEvents.map((e) =>
-        e.title === event.title ? { ...e, start: new Date(start), end: new Date(end) } : e
+        e.title === event.title
+          ? { ...e, start: new Date(start), end: new Date(end) }
+          : e
       );
       return updatedEvents;
     });
@@ -314,7 +324,9 @@ const DrawerCalender: FC = () => {
     const { event, start, end } = data;
     setEvents((currentEvents) => {
       const updatedEvents = currentEvents.map((e) =>
-        e.title === event.title ? { ...e, start: new Date(start), end: new Date(end) } : e
+        e.title === event.title
+          ? { ...e, start: new Date(start), end: new Date(end) }
+          : e
       );
       return updatedEvents;
     });
@@ -342,7 +354,10 @@ const DrawerCalender: FC = () => {
     if (e.key === "Enter" && tagInputRef.current?.value.trim() !== "") {
       // @ts-ignore
       const newTagLabel = tagInputRef.current.value.trim();
-      setTags([...tags, { id: new Date().getTime().toString(), label: newTagLabel }]);
+      setTags([
+        ...tags,
+        { id: new Date().getTime().toString(), label: newTagLabel },
+      ]);
       // @ts-ignore
       tagInputRef.current.value = "";
     }
@@ -365,9 +380,11 @@ const DrawerCalender: FC = () => {
   );
 
   return (
-
     <>
-     <DisplayCalendarButton $isVisible={!isCalendarVisible} onClick={() => setIsCalendarVisible(true)}>
+      <DisplayCalendarButton
+        $isVisible={!isCalendarVisible}
+        onClick={() => setIsCalendarVisible(true)}
+      >
         Display Calendar
       </DisplayCalendarButton>
 
@@ -391,22 +408,22 @@ const DrawerCalender: FC = () => {
             }}
           />
         )}
-      
-      {isModalOpen && selectedEvent && (
-        <>
-          <ModalOverlay onClick={closeModal} />
-          <ModalContainer>
-            <ModalContent>
-              <CloseButton onClick={closeModal}>Close</CloseButton>
-              <p>Title: {selectedEvent.title}</p>
-              <p>Person: {selectedEvent.person}</p>
-              <p>Custom border color: {selectedEvent.borderColor}</p>
-            </ModalContent>
-          </ModalContainer>
-        </>
-      )}
-      <LegendCard/>
-    </CalendarContainer>
+
+        {isModalOpen && selectedEvent && (
+          <>
+            <ModalOverlay onClick={closeModal} />
+            <ModalContainer>
+              <ModalContent>
+                <CloseButton onClick={closeModal}>Close</CloseButton>
+                <p>Title: {selectedEvent.title}</p>
+                <p>Person: {selectedEvent.person}</p>
+                <p>Custom border color: {selectedEvent.borderColor}</p>
+              </ModalContent>
+            </ModalContainer>
+          </>
+        )}
+        <LegendCard />
+      </CalendarContainer>
     </>
   );
 };
