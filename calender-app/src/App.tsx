@@ -1,5 +1,7 @@
 // import MyCalendar from "./Components/Calender";
-import CalendarComponent from "./Components/Calenders";
+import WebCalender from "./Components/WebCalender";
+// import CalendarComponent from "./Components/Calenders";
+import "./App.css"
 
 // const events = [
 //   {
@@ -31,7 +33,8 @@ import CalendarComponent from "./Components/Calenders";
 const App = () => (
   <div>
     {/* <MyCalendar events={events} /> */}
-    <CalendarComponent/>
+    {/* <CalendarComponent/> */}
+    <WebCalender/>
   </div>
 );
 

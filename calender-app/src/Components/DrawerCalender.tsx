@@ -1,6 +1,9 @@
+// DrawerCalender.tsx
 /* eslint-disable */
 // @ts-nocheck
-import { FC, useRef, useState, KeyboardEvent } from "react";
+
+
+import React, { FC, useRef, useState, KeyboardEvent } from "react";
 import { Calendar, dateFnsLocalizer, Event as REvent } from "react-big-calendar";
 import withDragAndDrop, { withDragAndDropProps } from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
@@ -12,6 +15,8 @@ import { addHours, startOfHour } from "date-fns";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import styled from "styled-components";
+import CustomToolbar from "./CustomToolBar"; // Import the custom toolbar
+import LegendCard from "./Legend";
 
 interface CustomEvent extends REvent {
   person: string;
@@ -24,9 +29,41 @@ interface Tag {
   label: string;
 }
 
-const CalendarContainer = styled.div`
+
+
+const CalendarContainer = styled.div<{ $isOpen: boolean }>`
+  width: 100%;
   height: 100vh;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out;
+  
+  transform: ${({ $isOpen }) => ($isOpen ? "translateX(0)" : "translateX(-100%)")};
+
+  @media (min-width: 1024px) {
+   
+    transform: translateX(0); /* Ensure calendar is always visible on larger screens */
+  }
+    @media (max-width: px) {
+   
+   visibility: hidden;
+  }
+`;
+
+const DrawerToggleButton = styled.button`
+  display: block;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+`;
+
+const DisplayCalendarButton = styled.button<{ $isVisible: boolean }>`
+  display: ${({ $isVisible }) => ($isVisible ? "block" : "none")};
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
 `;
 
 const SearchInput = styled.input`
@@ -46,11 +83,11 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-today {
-    background-color: #f0f0f0;
+    background-color: #fff;
   }
 
   .rbc-header {
-    background-color: #f8f8f8;
+    
     padding: auto;
     font-weight: bold;
   }
@@ -63,6 +100,19 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
     font-size: 16px;
     font-weight: bold;
   }
+     .rbc-timeslot-group {
+      min-height: 60px; /* Adjust this value to increase/decrease row height */
+      color: #717171;
+    }
+
+    .rbc-time-slot {
+      min-height: 30px; /* Should match the value above */
+      
+    }
+
+    .rbc-events-container {
+      margin-right: 10px; /* Add some margin to prevent events from touching the time column */
+    }
 
   .rbc-off-range-bg {
     background-color: #f8f8f8;
@@ -73,7 +123,7 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   }
 
   .rbc-time-content {
-    min-height: ${(props) => props.$eventsCount * 100}px;
+    height: 800px; /* Adjust the height to 800px or your desired height */
   }
 
   .rbc-addons-dnd .rbc-addons-dnd-resizable-month-event {
@@ -157,12 +207,15 @@ const TagCloseButton = styled.button`
   font-size: 16px;
 `;
 
-const CalendarComponent: FC = () => {
+const DrawerCalender: FC = () => {
   const [searchTerm] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<CustomEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const tagInputRef = useRef<HTMLInputElement>(null);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(true); // State for toggling calendar visibility
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false); // State for toggling calendar drawer
+
 
   const darkerShade = (color: string) => {
     let r = parseInt(color.slice(1, 3), 16);
@@ -177,29 +230,29 @@ const CalendarComponent: FC = () => {
   const [events, setEvents] = useState<CustomEvent[]>([
     {
       title: "Meeting with Alice",
-      start: new Date(2024, 5, 24, 10, 0),
-      end: new Date(2024, 5, 24, 11, 0),
+      start: new Date(2024, 5, 28, 10, 0),
+      end: new Date(2024, 5, 28, 11, 0),
       person: "Alice",
       color: "#f56a00",
     },
     {
       title: "Meeting with Bob",
-      start: new Date(2024, 5, 24, 10, 0),
-      end: new Date(2024, 5, 24, 11, 0),
+      start: new Date(2024, 5, 28, 10, 0),
+      end: new Date(2024, 5, 28, 11, 0),
       person: "Bob",
       color: "#7265e6",
     },
     {
       title: "Meeting with Charlie",
-      start: new Date(2024, 5, 24, 10, 0),
-      end: new Date(2024, 5, 24, 11, 0),
+      start: new Date(2024, 5, 28, 10, 0),
+      end: new Date(2024, 5, 28, 11, 0),
       person: "Charlie",
       color: "#ffbf00",
     },
     {
       title: "Meeting with Dave",
-      start: new Date(2024, 5, 24, 10, 0),
-      end: new Date(2024, 5, 24, 11, 0),
+      start: new Date(2024, 5, 28, 10, 0),
+      end: new Date(2024, 5, 28, 11, 0),
       person: "Dave",
       color: "#00aaff",
     },
@@ -312,37 +365,33 @@ const CalendarComponent: FC = () => {
   );
 
   return (
-    <CalendarContainer>
-      <TagContainer>
-        {tags.map((tag) => (
-          <Tag key={tag.id}>
-            {tag.label}
-            <TagCloseButton onClick={() => removeTag(tag.id)}>x</TagCloseButton>
-          </Tag>
-        ))}
-        <SearchInput
-          ref={tagInputRef}
-          type="text"
-          placeholder="Search Users"
-          onKeyDown={handleKeyDown}
-        />
-      </TagContainer>
-      <DnDCalendar
-        defaultView="week"
-        events={filteredEvents}
-        localizer={localizer}
-        onEventDrop={onEventDrop}
-        onEventResize={onEventResize}
-        resizable
-        style={{ height: "calc(100vh - 60px)" }}
-        // @ts-ignore
-        eventPropGetter={eventStyleGetter}
-        // @ts-ignore
-        onSelectEvent={handleSelectEvent}
-        step={15}
-        timeslots={4}
-        $eventsCount={filteredEvents.length}
-      />
+
+    <>
+     <DisplayCalendarButton $isVisible={!isCalendarVisible} onClick={() => setIsCalendarVisible(true)}>
+        Display Calendar
+      </DisplayCalendarButton>
+
+      <CalendarContainer $isOpen={isCalendarOpen}>
+        {/* Your calendar component */}
+        {isCalendarVisible && (
+          <DnDCalendar
+            defaultView="day"
+            events={filteredEvents}
+            localizer={localizer}
+            onEventDrop={onEventDrop}
+            onEventResize={onEventResize}
+            resizable
+            eventPropGetter={eventStyleGetter}
+            onSelectEvent={handleSelectEvent}
+            step={15}
+            timeslots={4}
+            $eventsCount={filteredEvents.length}
+            components={{
+              toolbar: CustomToolbar,
+            }}
+          />
+        )}
+      
       {isModalOpen && selectedEvent && (
         <>
           <ModalOverlay onClick={closeModal} />
@@ -356,8 +405,10 @@ const CalendarComponent: FC = () => {
           </ModalContainer>
         </>
       )}
+      <LegendCard/>
     </CalendarContainer>
+    </>
   );
 };
 
-export default CalendarComponent;
+export default DrawerCalender;
