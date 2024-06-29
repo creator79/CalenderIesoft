@@ -40,6 +40,7 @@ const CalendarContainer = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
+    border-left: 1px solid #E8E8E8;
 
   transform: ${({ $isOpen }) =>
     $isOpen ? "translateX(0)" : "translateX(-100%)"};
@@ -53,7 +54,14 @@ const CalendarContainer = styled.div<{ $isOpen: boolean }>`
     visibility: hidden;
   }
 `;
-
+const LegendContainer = styled.div`
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+`;
 const DrawerToggleButton = styled.button`
   display: block;
   position: fixed;
@@ -83,7 +91,20 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
   .rbc-event {
     border: none;
     opacity: 0.8;
-    color: black;
+    font-size: 12px;
+    color: #fff;
+   border : 1px solid #fff;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+      
+  }
+  .rbc-label {
+    padding: 0 4.5px;
+  }
+  .rbc-time-view {
+    border: none;
+    padding: 12px;
   }
 
   .rbc-today {
@@ -133,8 +154,13 @@ const StyledCalendar = styled(Calendar)<{ $eventsCount: number }>`
     font-weight: 500px;
   }
 
+.rbc-allday-cell {
+  display : none;
+}
+
   .rbc-addons-dnd .rbc-addons-dnd-resizable-month-event {
     display: none;
+    border: none;
   }
 `;
 
@@ -237,74 +263,131 @@ const DrawerCalender: FC = () => {
 
   const [events, setEvents] = useState<CustomEvent[]>([
     {
-      title: "Meeting with Alice",
-      start: new Date(2024, 5, 28, 10, 0),
-      end: new Date(2024, 5, 28, 11, 0),
-      person: "Alice",
-      color: "#f56a00",
+      title: "Service Appointment 1",
+      start: new Date(2024, 5, 29, 8, 0),
+      end: new Date(2024, 5, 29, 9, 0),
+      person: "Dr. Smith",
+      color: "#068BEE", // Blue for services
     },
     {
-      title: "Meeting with Bob",
-      start: new Date(2024, 5, 28, 10, 0),
-      end: new Date(2024, 5, 28, 11, 0),
-      person: "Bob",
-      color: "#7265e6",
+      title: "Consultation 1",
+      start: new Date(2024, 5, 29, 9, 0),
+      end: new Date(2024, 5, 29, 10, 0),
+      person: "Dr. John",
+      color: "#009A51", // Green for consultations
     },
     {
-      title: "Meeting with Charlie",
-      start: new Date(2024, 5, 28, 10, 0),
-      end: new Date(2024, 5, 28, 11, 0),
-      person: "Charlie",
-      color: "#ffbf00",
+      title: "Hydration Ringers",
+      start: new Date(2024, 5, 29, 10, 0),
+      end: new Date(2024, 5, 29, 10, 15),
+      person: "Nurse Kelly",
+      color: "#068BEE",
     },
     {
-      title: "Meeting with Dave",
-      start: new Date(2024, 5, 28, 10, 0),
-      end: new Date(2024, 5, 28, 11, 0),
-      person: "Dave",
-      color: "#00aaff",
+      title: "Hangover Relief",
+      start: new Date(2024, 5, 29, 10, 0),
+      end: new Date(2024, 5, 29, 10, 15),
+      person: "Dr. Chris",
+      color: "#068BEE",
     },
     {
-      title: "Project Review",
-      start: new Date(2024, 5, 25, 14, 0),
-      end: new Date(2024, 5, 25, 15, 0),
-      person: "Alice",
-      color: "#f56a00",
+      title: "Service Appointment 2",
+      start: new Date(2024, 5, 29, 10, 0),
+      end: new Date(2024, 5, 29, 11, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
     },
     {
-      title: "Client Call",
-      start: new Date(2024, 5, 25, 16, 0),
-      end: new Date(2024, 5, 25, 17, 0),
-      person: "Bob",
-      color: "#7265e6",
+      title: "Consultation 2",
+      start: new Date(2024, 5, 29, 10, 30),
+      end: new Date(2024, 5, 29, 11, 30),
+      person: "Dr. John",
+      color: "#009A51",
     },
     {
-      title: "Team Sync",
-      start: new Date(2024, 5, 26, 10, 0),
-      end: new Date(2024, 5, 26, 11, 0),
-      person: "Charlie",
-      color: "#ffbf00",
+      title: "Service Appointment 3",
+      start: new Date(2024, 5, 29, 11, 0),
+      end: new Date(2024, 5, 29, 12, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
     },
     {
-      title: "Lunch with Mike",
-      start: new Date(2024, 5, 26, 12, 0),
-      end: new Date(2024, 5, 26, 13, 0),
-      person: "Dave",
-      color: "#00aaff",
+      title: "Consultation 3",
+      start: new Date(2024, 5, 29, 11, 30),
+      end: new Date(2024, 5, 29, 12, 30),
+      person: "Dr. John",
+      color: "#009A51",
     },
     {
-      title: "One-on-One",
-      start: new Date(2024, 5, 27, 9, 0),
-      end: new Date(2024, 5, 27, 10, 0),
-      person: "Alice",
-      color: "#f56a00",
+      title: "Service Appointment 4",
+      start: new Date(2024, 5, 29, 12, 0),
+      end: new Date(2024, 5, 29, 13, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
     },
     {
-      title: "Weekly Standup",
-      start: new Date(2024, 5, 27, 11, 0),
-      end: new Date(2024, 5, 27, 12, 0),
-      person: "Bob",
-      color: "#7265e6",
+      title: "Consultation 4",
+      start: new Date(2024, 5, 29, 13, 0),
+      end: new Date(2024, 5, 29, 14, 0),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Service Appointment 5",
+      start: new Date(2024, 5, 29, 14, 0),
+      end: new Date(2024, 5, 29, 15, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Consultation 5",
+      start: new Date(2024, 5, 29, 14, 30),
+      end: new Date(2024, 5, 29, 15, 30),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Service Appointment 6",
+      start: new Date(2024, 5, 29, 15, 0),
+      end: new Date(2024, 5, 29, 16, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Consultation 6",
+      start: new Date(2024, 5, 29, 15, 30),
+      end: new Date(2024, 5, 29, 16, 30),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Service Appointment 7",
+      start: new Date(2024, 5, 29, 16, 0),
+      end: new Date(2024, 5, 29, 17, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Consultation 7",
+      start: new Date(2024, 5, 29, 17, 0),
+      end: new Date(2024, 5, 29, 18, 0),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+
+    {
+      title: "Service Appointment 8",
+      start: new Date(2024, 5, 29, 18, 0),
+      end: new Date(2024, 5, 29, 19, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Consultation 8",
+      start: new Date(2024, 5, 29, 19, 0),
+      end: new Date(2024, 5, 29, 20, 0),
+      person: "Dr. John",
+      color: "#009A51",
     },
   ]);
 
@@ -336,7 +419,7 @@ const DrawerCalender: FC = () => {
     return {
       style: {
         backgroundColor: event.color,
-        borderLeft: `5px solid ${darkerShade(event.color)}`,
+        // borderLeft: `5px solid ${darkerShade(event.color)}`,
       },
     };
   };
@@ -422,7 +505,10 @@ const DrawerCalender: FC = () => {
             </ModalContainer>
           </>
         )}
+        <LegendContainer>
+
         <LegendCard />
+        </LegendContainer>
       </CalendarContainer>
     </>
   );

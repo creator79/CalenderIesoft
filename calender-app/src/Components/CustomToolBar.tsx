@@ -12,9 +12,9 @@ const ToolbarContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 24px 20px 20px 20px;
   background-color: #ffffff;
-  border-bottom: 1px solid #ccc;
+
 `;
 
 const Button = styled.button`
@@ -22,7 +22,9 @@ const Button = styled.button`
   border: none;
   cursor: pointer;
   font-size: 16px;
-`;
+  height :48px;
+  width:48px;
+  `;
 
 const CurrentDate = styled.div`
   display: flex;
@@ -30,9 +32,10 @@ const CurrentDate = styled.div`
 `;
 
 const DateText = styled.span`
-  font-size: 16px;
-  font-weight: bold;
-  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 12px;
+  line-height ; 20px;
 `;
 
 const ControlIcon = styled.img`
@@ -44,10 +47,12 @@ const TodayButton = styled.button`
   font-family: Inter, sans-serif;
   justify-content: center;
   border-radius: 100px;
-  background-color: #f7f7f7;
   margin-top: 8px;
+  font-size:14px;
   font-weight: 600;
   padding: 6px 16px;
+  border: none;
+  background-color:#F7F7F7;
 `;
 
 const CalendarIconImg = styled.img`
@@ -75,7 +80,7 @@ const CustomToolbar: React.FC<ToolbarProps> = ({ date, onNavigate }) => {
   return (
     <ToolbarContainer>
       <TodayButton onClick={() => onNavigate("TODAY")}>Today</TodayButton>
-      <MainView>
+  
         <CurrentDate>
         <DatePicker
           selected={startDate}
@@ -87,14 +92,15 @@ const CustomToolbar: React.FC<ToolbarProps> = ({ date, onNavigate }) => {
         />
           <DateText>{formattedDate}</DateText>
         </CurrentDate>
-        
+        <MainView>
         <Button onClick={() => onNavigate("PREV")}>
           <ControlIcon src={LeftArrow} alt="Previous" />
         </Button>
         <Button onClick={() => onNavigate("NEXT")}>
           <ControlIcon src={RightArrow} alt="Next" />
         </Button>
-      </MainView>
+        </MainView>
+     
     </ToolbarContainer>
   );
 };
