@@ -326,8 +326,29 @@ const DrawerCalender: FC = () => {
       color: "#068BEE",
     },
     {
-      title: "Consultation 4",
+      title: "Consultation 4 of Time Slot 1",
       start: new Date(2024, 5, 29, 13, 0),
+      end: new Date(2024, 5, 29, 13, 15),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Consultation 4 of Time Slot 2",
+      start: new Date(2024, 5, 29, 13, 15),
+      end: new Date(2024, 5, 29, 13, 30),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Consultation 4 of Time Slot 3",
+      start: new Date(2024, 5, 29, 13, 30),
+      end: new Date(2024, 5, 29, 13, 45),
+      person: "Dr. John",
+      color: "#009A51",
+    },
+    {
+      title: "Consultation 4 of Time Slot 4",
+      start: new Date(2024, 5, 29, 13, 45),
       end: new Date(2024, 5, 29, 14, 0),
       person: "Dr. John",
       color: "#009A51",
@@ -374,7 +395,6 @@ const DrawerCalender: FC = () => {
       person: "Dr. John",
       color: "#009A51",
     },
-
     {
       title: "Service Appointment 8",
       start: new Date(2024, 5, 29, 18, 0),
@@ -389,7 +409,37 @@ const DrawerCalender: FC = () => {
       person: "Dr. John",
       color: "#009A51",
     },
+    {
+      title: "Service Appointment 9",
+      start: new Date(2024, 5, 29, 18, 0),
+      end: new Date(2024, 5, 29, 18, 15),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Service Appointment 10",
+      start: new Date(2024, 5, 29, 18, 15),
+      end: new Date(2024, 5, 29, 18, 30),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Service Appointment 11",
+      start: new Date(2024, 5, 29, 18, 30),
+      end: new Date(2024, 5, 29, 18, 45),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
+    {
+      title: "Service Appointment 12",
+      start: new Date(2024, 5, 29, 18, 45),
+      end: new Date(2024, 5, 29, 19, 0),
+      person: "Dr. Smith",
+      color: "#068BEE",
+    },
   ]);
+  
+  
 
   const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
     const { event, start, end } = data;
