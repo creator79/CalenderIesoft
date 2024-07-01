@@ -38,6 +38,7 @@ const Card = styled.section`
   font-size: 12px;
   font-weight: 500;
   text-align: center;
+  padding : 10px;
 `;
 
 const LegendContainer = styled.div`
