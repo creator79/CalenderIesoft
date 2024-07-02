@@ -51,6 +51,7 @@ const TodayButton = styled.button`
   padding: 6px 16px;
   border: none;
   background-color: #F7F7F7;
+  cursor : pointer ;
 `;
 
 const CalendarIconImg = styled.img`
