@@ -1,5 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import ClosedIcon from "../assets/close.svg";
+import LinkIcon from "../assets/Vector(4).svg";
+import Services from "../assets/Vector(3).svg";
+import Scheduled from "../assets/Vector(2).svg";
+import Account from "../assets/Vector(1).svg";
+
 
 type ConsultationCardProps = {
   date: string;
@@ -20,27 +26,32 @@ const ConsultationCard: React.FC<ConsultationCardProps> = ({
 }) => {
   return (
     <Card>
-     <CloseButton aria-label="Close" onClick={onClose} /> 
+      <CloseButton aria-label="Close" onClick={onClose}>
+        <ClosedIconWrapper src={ClosedIcon} alt="Close" />
+      </CloseButton>
       <CardContent>
         <CardHeader>Consultation</CardHeader>
-        <CardDate>{`${date} at ${time}`}</CardDate>
+        <CardDate>{`${date} , ${time}`}</CardDate>
         <ViewDetailsButton>
           View details
-          <ArrowIcon src="https://cdn.builder.io/api/v1/image/assets/TEMP/3c6a766e483312eeae9ea38c9c3d1e09dc3dba28136e41295ef356af315ef129?apiKey=afe94c951e2f4de1aefc2822430b019d&" alt="" />
+          <ArrowIcon
+            src={LinkIcon}
+            alt=""
+          />
         </ViewDetailsButton>
         <InfoSection>
           <InfoItem
-            icon="https://cdn.builder.io/api/v1/image/assets/TEMP/cafee697523626ecd284c2a2215bddd2d8b6c50a5f2fa8cf5e1ac283ed199b16?apiKey=afe94c951e2f4de1aefc2822430b019d&"
+            icon={Account}
             label="Client"
             value={clientName}
           />
           <InfoItem
-            icon="https://cdn.builder.io/api/v1/image/assets/TEMP/abce8f3b71557d7d165ee4c6c0f402b4e7d37f878b8e207918edfb8df880e03a?apiKey=afe94c951e2f4de1aefc2822430b019d&"
+            icon={Scheduled}
             label="Scheduled with"
             value={doctorName}
           />
           <InfoItem
-            icon="https://cdn.builder.io/api/v1/image/assets/TEMP/9e6b94c7ed6b2d77feec6b796320f6e43870bd5bea2abbf2c73b49b8dd10bc73?apiKey=afe94c951e2f4de1aefc2822430b019d&"
+            icon={Services}
             label="Services"
             value={services.join(", ")}
           />
@@ -70,42 +81,58 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value }) => (
     </InfoContent>
   </InfoItemWrapper>
 );
-
 const Card = styled.article`
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   background-color: #fff;
   display: flex;
-  width: 100%;
   flex-direction: column;
   font-weight: 500;
+  max-width: 100%;
+  width: 320px;
+  margin: 0 auto;
+
+  @media (min-width: 400px) {
+    width: 360px;
+  }
+
+  @media (min-width: 768px) {
+    width: 400px;
+  }
 `;
 
 const CloseButton = styled.button`
-  background: url("https://cdn.builder.io/api/v1/image/assets/TEMP/a5b559093e531ae09dc7efe5641429c7aec123e8fd2c000855b892c23ff7f100?apiKey=afe94c951e2f4de1aefc2822430b019d&") no-repeat center;
-  background-size: contain;
-  width: 20px;
-  height: 20px;
+  background: none;
   border: none;
   cursor: pointer;
   align-self: flex-end;
-  margin: 8px 8px 0 0;
+  padding: 16px 16px 0 0;
+`;
+
+const ClosedIconWrapper = styled.img`
+  width: 20px;
+  height: 20px;
 `;
 
 const CardContent = styled.div`
   padding: 16px 20px;
+  font-weight: 500;
 `;
 
 const CardHeader = styled.h2`
   color: #252527;
-  font: 700 18px/1.33 Inter, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
   margin: 0;
 `;
 
 const CardDate = styled.p`
   color: #717171;
-  font: 14px/1.43 Inter, sans-serif;
   margin: 4px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
 `;
 
 const ViewDetailsButton = styled.button`
@@ -113,7 +140,9 @@ const ViewDetailsButton = styled.button`
   align-items: center;
   gap: 4px;
   color: #043540;
-  font: 600 14px/1.43 Inter, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
   background: none;
   border: none;
   padding: 0;
@@ -122,8 +151,8 @@ const ViewDetailsButton = styled.button`
 `;
 
 const ArrowIcon = styled.img`
-  width: 16px;
-  height: 16px;
+  width: 8px;
+  height: 8px;
 `;
 
 const InfoSection = styled.section`
@@ -141,21 +170,29 @@ const InfoItemWrapper = styled.div`
 const InfoIcon = styled.img`
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
 `;
 
 const InfoContent = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 `;
 
 const InfoLabel = styled.span`
   color: #717171;
-  font: 12px/1.33 Inter, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 const InfoValue = styled.span`
   color: #252527;
-  font: 14px/1.43 Inter, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  word-wrap: break-word;
 `;
 
 const Divider = styled.hr`
@@ -167,9 +204,12 @@ const Divider = styled.hr`
 
 const ActionText = styled.p`
   color: #717171;
-  font: 14px/1.43 Inter, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
   margin: 0;
-   white-space: nowrap; 
+  white-space: normal;
+  word-wrap: break-word;
 `;
 
 const ActionLink = styled.a`

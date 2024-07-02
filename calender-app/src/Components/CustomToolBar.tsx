@@ -64,13 +64,19 @@ const MainView = styled.div`
   align-items: center;
 `;
 
-const CustomToolbar: React.FC<ToolbarProps> = ({ date, onNavigate }) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date(date));
-  const formattedDate = format(date, "MMMM dd, yyyy");
+const CustomToolbar: React.FC<ToolbarProps & { selectedDate: Date; onDateChange: (date: Date) => void }> = ({ 
+  onNavigate, 
+  selectedDate, 
+  onDateChange 
+}) => {
+  const [startDate, setStartDate] = useState<Date | null>(selectedDate);
+  const formattedDate = format(selectedDate, "MMMM dd, yyyy");
+
 
   const handleDateChange = (date: Date | null) => {
     if (date) {
       setStartDate(date);
+      onDateChange(date);
       onNavigate("DATE", date);
     }
   };
